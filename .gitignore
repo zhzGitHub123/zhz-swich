@@ -1,0 +1,28 @@
+.DS_Store
+
+# Swift / Xcode 构建产物
+.build/
+DerivedData/
+dist/
+*.dmg
+
+# Xcode 与 SwiftPM 的本机状态
+xcuserdata/
+*.xcuserstate
+.swiftpm/
+
+# 本地工具缓存
+.codegraph/
+
+# 本地环境与凭据
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.key
+
+# 前端依赖与构建缓存
+node_modules/
+
