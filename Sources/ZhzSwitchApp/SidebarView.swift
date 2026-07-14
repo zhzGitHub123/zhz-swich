@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 
 struct SidebarView: View {
@@ -51,14 +50,13 @@ struct SidebarView: View {
                             switch phase {
                             case .active:
                                 hoveredItem = item.key
-                                NSCursor.pointingHand.set()
                             case .ended:
                                 if hoveredItem == item.key {
                                     hoveredItem = nil
                                 }
-                                NSCursor.arrow.set()
                             }
                         }
+                        .interactivePointerStyle()
                     }
                 }
                 .padding(.top, 22)

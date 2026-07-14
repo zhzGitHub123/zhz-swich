@@ -1,7 +1,4 @@
 import Foundation
-#if canImport(ZhzSwitchCore)
-import ZhzSwitchCore
-#endif
 
 @MainActor
 final class SkillListStore: ObservableObject {

@@ -274,7 +274,6 @@ struct ProviderEditorView: View {
         draft.configurationJSON = configurationJSON
         draft.writesGeneralConfiguration = writesGeneralConfiguration
         draft.usesStandaloneBillingConfiguration = usesStandaloneBillingConfiguration
-        draft.avatarText = String(trimmedName.prefix(2))
         draft.usesFullURL = usesFullURL
 
         guard draft.isValidURL else {

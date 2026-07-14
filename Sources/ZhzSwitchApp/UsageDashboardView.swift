@@ -24,7 +24,8 @@ struct UsageDashboard: View {
                 actions: [
                     ModuleAction(title: "过去 7 天", icon: "calendar"),
                     ModuleAction(title: "导出 CSV", icon: "square.and.arrow.up")
-                ]
+                ],
+                usesLiquidGlassButtons: true
             )
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4), spacing: 16) {
@@ -65,7 +66,7 @@ private struct MetricSummaryCard: View {
     let tint: Color
 
     var body: some View {
-        GlassCard(tint: tint, cornerRadius: 21) {
+        NativeLiquidGlassCard(tint: tint, cornerRadius: 21) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.system(size: 12, weight: .medium))
@@ -95,7 +96,7 @@ private struct ProviderDistributionCard: View {
     ]
 
     var body: some View {
-        GlassCard(cornerRadius: 23) {
+        NativeLiquidGlassCard(cornerRadius: 23) {
             VStack(alignment: .leading, spacing: 13) {
                 HStack {
                     Text("按提供商分布").fontWeight(.bold)
@@ -141,7 +142,7 @@ private struct ApplicationDistributionCard: View {
     ]
 
     var body: some View {
-        GlassCard(tint: .purple, cornerRadius: 23) {
+        NativeLiquidGlassCard(tint: .purple, cornerRadius: 23) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("按应用分布").fontWeight(.bold)
                 HStack(spacing: 16) {
@@ -196,7 +197,7 @@ private struct TrendChartCard: View {
     private let values: [CGFloat] = [34, 48, 40, 56, 51, 66, 58, 72, 69, 84, 75, 92, 87, 98]
 
     var body: some View {
-        GlassCard(cornerRadius: 23) {
+        NativeLiquidGlassCard(cornerRadius: 23) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text("成本与 Token 趋势").fontWeight(.bold)
@@ -260,22 +261,27 @@ private struct RequestLogCard: View {
     private let widths: [CGFloat] = [62, 108, 82, 110, 72, 72, 74]
 
     var body: some View {
-        GlassCard(cornerRadius: 23) {
+        NativeLiquidGlassCard(cornerRadius: 23) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Text("请求日志").fontWeight(.bold)
                     Spacer()
-                    HeaderButton(title: "导出", icon: "square.and.arrow.up")
+                    HeaderButton(
+                        title: "导出",
+                        icon: "square.and.arrow.up",
+                        usesLiquidGlass: true
+                    )
                 }
-                VStack(spacing: 0) {
-                    LogRow(values: ["时间", "应用", "提供商", "模型", "输入", "输出", "成本"], widths: widths, header: true)
-                    ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                        Divider().overlay(.white.opacity(0.44))
-                        LogRow(values: row, widths: widths)
+                NativeLiquidGlassCard(cornerRadius: 16, fillsAvailableSpace: false) {
+                    VStack(spacing: 0) {
+                        LogRow(values: ["时间", "应用", "提供商", "模型", "输入", "输出", "成本"], widths: widths, header: true)
+                        ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                            Divider().overlay(.white.opacity(0.44))
+                            LogRow(values: row, widths: widths)
+                        }
                     }
+                    .frame(maxWidth: .infinity)
                 }
-        .background(Color.themeSurface.opacity(0.20), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay { RoundedRectangle(cornerRadius: 16).stroke(Color.themeBorder.opacity(0.48), lineWidth: 1) }
             }
             .padding(UsageLayout.cardPadding)
         }

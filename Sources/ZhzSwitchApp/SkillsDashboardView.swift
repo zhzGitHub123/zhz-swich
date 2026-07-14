@@ -1,8 +1,5 @@
 import AppKit
 import SwiftUI
-#if canImport(ZhzSwitchCore)
-import ZhzSwitchCore
-#endif
 
 struct SkillsDashboard: View {
     let family: AppThemeFamily

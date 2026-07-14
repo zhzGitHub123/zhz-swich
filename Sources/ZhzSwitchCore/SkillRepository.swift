@@ -17,7 +17,7 @@ public struct SkillRecord: Identifiable, Equatable, Sendable {
     public let isReadOnly: Bool
 
     public var id: String {
-        [target.rawValue, origin.rawValue, directoryName, isEnabled.description]
+        [target.rawValue, origin.rawValue, directoryName]
             .joined(separator: ":")
     }
 

@@ -109,14 +109,15 @@ struct ModuleHeader: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(eyebrow)
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Color.slate500)
+                    .foregroundStyle(Color.white.opacity(0.72))
                 Text(title)
                     .font(.system(size: 29, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color.slate900)
+                    .foregroundStyle(Color.white.opacity(0.98))
                 Text(subtitle)
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(Color.slate600)
+                    .foregroundStyle(Color.white.opacity(0.82))
             }
+            .shadow(color: Color.black.opacity(0.48), radius: 3, y: 1)
             Spacer(minLength: 12)
             HStack(spacing: 8) {
                 ForEach(actions) { action in

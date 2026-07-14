@@ -1,8 +1,5 @@
 import AppKit
 import SwiftUI
-#if canImport(ZhzSwitchCore)
-import ZhzSwitchCore
-#endif
 
 @main
 struct ZhzSwitchApp: App {

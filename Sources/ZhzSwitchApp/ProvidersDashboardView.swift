@@ -8,17 +8,7 @@ struct ProvidersDashboard: View {
     @State private var providerBeingEdited: ProviderProfile?
     @State private var providerPendingDeletion: ProviderProfile?
     private var providers: [ProviderVisual] {
-        switch family {
-        case .codex:
-            return store.providers
-                .filter { $0.family == AppThemeFamily.codex.rawValue }
-                .map(ProviderVisual.init)
-        case .claude:
-            let storedProviders = managedProviders
-            return storedProviders.isEmpty
-                ? ProviderVisual.claudeSamples
-                : storedProviders.map(ProviderVisual.init)
-        }
+        managedProviders.map(ProviderVisual.init)
     }
 
     private var managedProviders: [ProviderProfile] {
@@ -451,84 +441,13 @@ private struct ProviderVisual: Identifiable {
     let glyph: String
     let model: String
 
-    static let claudeSamples: [ProviderVisual] = [
-        ProviderVisual(
-            id: UUID(uuidString: "C1A00000-0000-4000-8000-000000000001")!,
-            name: "Anthropic Official",
-            app: "Claude API",
-            status: .active,
-            colors: [Color(hex: 0xE8A07A), Color(hex: 0xD97757)],
-            tint: Color(hex: 0xD97757),
-            glyph: "AN",
-            model: "api.anthropic.com"
-        ),
-        ProviderVisual(
-            id: UUID(uuidString: "C1A00000-0000-4000-8000-000000000002")!,
-            name: "AWS Bedrock",
-            app: "企业推理网关",
-            status: .idle,
-            colors: [Color(hex: 0xFBBF24), Color(hex: 0xF97316)],
-            tint: .orange,
-            glyph: "AWS",
-            model: "bedrock.us-east-1"
-        ),
-        ProviderVisual(
-            id: UUID(uuidString: "C1A00000-0000-4000-8000-000000000003")!,
-            name: "Google Vertex AI",
-            app: "Cloud Endpoint",
-            status: .idle,
-            colors: [Color(hex: 0x60A5FA), Color(hex: 0x2563EB)],
-            tint: .blue,
-            glyph: "GCP",
-            model: "us-central1-aiplatform"
-        ),
-        ProviderVisual(
-            id: UUID(uuidString: "C1A00000-0000-4000-8000-000000000004")!,
-            name: "OpenRouter Claude",
-            app: "模型路由",
-            status: .warning,
-            colors: [Color(hex: 0xC4B5FD), Color(hex: 0x7C3AED)],
-            tint: .purple,
-            glyph: "OR",
-            model: "openrouter.ai"
-        )
-    ]
-
-    private init(
-        id: UUID,
-        name: String,
-        app: String,
-        status: ProviderStatus,
-        colors: [Color],
-        tint: Color,
-        glyph: String,
-        model: String
-    ) {
-        self.id = id
-        self.name = name
-        self.app = app
-        self.status = status
-        self.colors = colors
-        self.tint = tint
-        self.glyph = glyph
-        self.model = model
-    }
-
     init(profile: ProviderProfile) {
-        let palettes: [([Color], Color)] = [
-            ([Color(hex: 0xFDBA74), Color(hex: 0xF59E0B)], .blue),
-            ([Color(hex: 0x6EE7B7), Color(hex: 0x14B8A6)], .purple),
-            ([Color(hex: 0x7DD3FC), Color(hex: 0x6366F1)], .white),
-            ([Color(hex: 0xC4B5FD), Color(hex: 0xD946EF)], .purple),
-            ([Color(hex: 0xFDA4AF), Color(hex: 0xEC4899)], .white)
-        ]
-        let palette = palettes[Int(UInt(bitPattern: profile.name.hashValue) % UInt(palettes.count))]
         id = profile.id
         name = profile.name
         app = profile.note.isEmpty ? "自定义提供商" : profile.note
         status = profile.isActive ? .active : (profile.isValidURL ? .idle : .warning)
-        colors = palette.0
-        tint = palette.1
+        colors = [Color(hex: 0x7DD3FC), Color(hex: 0x6366F1)]
+        tint = .white
         glyph = profile.avatarText
         model = URLComponents(string: profile.normalizedBaseURL)?.host ?? profile.normalizedBaseURL
     }
