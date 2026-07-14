@@ -14,7 +14,8 @@ struct McpDashboard: View {
                     ModuleAction(title: "同步", icon: "arrow.clockwise"),
                     ModuleAction(title: "导入", icon: "square.and.arrow.down"),
                     ModuleAction(title: "新增", icon: "plus", emphasized: true)
-                ]
+                ],
+                usesLiquidGlassButtons: true
             )
 
             HStack(spacing: 8) {
@@ -40,20 +41,24 @@ private struct FilterCapsule: View {
     var active = false
 
     var body: some View {
-        HStack(spacing: 6) {
-            Text(title)
-            Text(value)
-                .font(.system(size: 10, weight: .bold))
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
+        NativeLiquidGlassCard(
+            tint: active ? .blue : nil,
+            cornerRadius: 17,
+            fillsAvailableSpace: false
+        ) {
+            HStack(spacing: 6) {
+                Text(title)
+                Text(value)
+                    .font(.system(size: 10, weight: .bold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
                     .background(Color.themeSurface.opacity(0.55), in: Capsule())
+            }
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundStyle(Color.slate700)
+            .padding(.horizontal, 12)
+            .frame(minHeight: 34)
         }
-        .font(.system(size: 12, weight: .semibold))
-        .foregroundStyle(Color.slate700)
-        .padding(.horizontal, 12)
-        .frame(height: 34)
-        .background(active ? Color.blue.opacity(0.16) : .white.opacity(0.30), in: Capsule())
-                    .overlay { Capsule().stroke(Color.themeBorder.opacity(0.62), lineWidth: 1) }
     }
 }
 
@@ -62,7 +67,7 @@ private struct McpServerCard: View {
     let tint: Color
 
     var body: some View {
-        GlassCard(tint: tint, cornerRadius: 22) {
+        NativeLiquidGlassCard(tint: tint, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 12) {
                     ZStack {
@@ -178,7 +183,8 @@ struct PromptsDashboard: View {
                     ModuleAction(title: "导入", icon: "square.and.arrow.down"),
                     ModuleAction(title: "导出", icon: "square.and.arrow.up"),
                     ModuleAction(title: "新建", icon: "plus", emphasized: true)
-                ]
+                ],
+                usesLiquidGlassButtons: true
             )
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 245, maximum: 360), spacing: 18)], spacing: 18) {
@@ -195,7 +201,7 @@ private struct PromptCard: View {
     let tint: Color
 
     var body: some View {
-        GlassCard(tint: tint, cornerRadius: 22) {
+        NativeLiquidGlassCard(tint: tint, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     HStack(spacing: 4) {
@@ -228,9 +234,9 @@ private struct PromptCard: View {
                         .foregroundStyle(Color.slate600)
                     Spacer()
                     HStack(spacing: 5) {
-                        CompactIconButton(icon: "eye")
-                        CompactIconButton(icon: "square.and.pencil")
-                        CompactIconButton(icon: "trash")
+                        CompactIconButton(icon: "eye", usesLiquidGlass: true)
+                        CompactIconButton(icon: "square.and.pencil", usesLiquidGlass: true)
+                        CompactIconButton(icon: "trash", usesLiquidGlass: true)
                     }
                 }
             }
@@ -280,7 +286,7 @@ private struct AppearanceSettingsCard: View {
     @Binding var themeMode: AppThemeMode
 
     var body: some View {
-        GlassCard(tint: .blue, cornerRadius: 23) {
+        NativeLiquidGlassCard(tint: .blue, cornerRadius: 23) {
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     Text("外观").font(.system(size: 16, weight: .bold)).foregroundStyle(Color.slate900)
@@ -316,7 +322,11 @@ private struct AppearanceChoice: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        NativeLiquidGlassButton(
+            tint: active ? .accentColor : nil,
+            cornerRadius: 16,
+            action: action
+        ) {
             VStack(spacing: 7) {
                 Image(systemName: active ? "checkmark.circle.fill" : mode.icon)
                     .font(.system(size: 18, weight: .semibold))
@@ -325,18 +335,7 @@ private struct AppearanceChoice: View {
             .foregroundStyle(active ? Color.accentColor : Color.slate700)
             .frame(maxWidth: .infinity)
             .frame(height: 72)
-            .background(
-                active
-                ? AnyShapeStyle(LinearGradient(colors: [.cyan.opacity(0.30), .purple.opacity(0.26)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                : AnyShapeStyle(Color.themeSurface.opacity(0.28)),
-                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-            )
-            .overlay {
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(active ? Color.accentColor.opacity(0.55) : Color.themeBorder.opacity(0.48), lineWidth: active ? 1.5 : 1)
-            }
         }
-        .buttonStyle(.plain)
         .accessibilityLabel("\(mode.title)主题")
         .accessibilityAddTraits(active ? .isSelected : [])
     }
@@ -344,16 +343,16 @@ private struct AppearanceChoice: View {
 
 private struct DataSettingsCard: View {
     var body: some View {
-        GlassCard(tint: .purple, cornerRadius: 23) {
+        NativeLiquidGlassCard(tint: .purple, cornerRadius: 23) {
             VStack(alignment: .leading, spacing: 15) {
                 Text("数据 & 备份").font(.system(size: 16, weight: .bold)).foregroundStyle(Color.slate900)
                 SettingsRow(title: "数据库位置") { Text("~/Library/zhz-switch").font(.system(size: 10, design: .monospaced)).foregroundStyle(Color.slate600) }
                 SettingsRow(title: "自动备份") { VisualToggle(enabled: true) }
                 SettingsRow(title: "缓存大小") { Text("142 MB").foregroundStyle(Color.slate700) }
                 HStack(spacing: 8) {
-                    HeaderButton(title: "立即备份", icon: "externaldrive")
-                    HeaderButton(title: "恢复", icon: "arrow.counterclockwise")
-                    HeaderButton(title: "清缓存", icon: "trash")
+                    HeaderButton(title: "立即备份", icon: "externaldrive", usesLiquidGlass: true)
+                    HeaderButton(title: "恢复", icon: "arrow.counterclockwise", usesLiquidGlass: true)
+                    HeaderButton(title: "清缓存", icon: "trash", usesLiquidGlass: true)
                 }
                 .padding(.top, 3)
                 Spacer()
@@ -369,29 +368,29 @@ private struct SettingsRow<Trailing: View>: View {
     let title: String
     @ViewBuilder let trailing: Trailing
     var body: some View {
-        HStack {
-            Text(title).fontWeight(.medium).foregroundStyle(Color.slate800)
-            Spacer()
-            trailing
+        NativeLiquidGlassCard(cornerRadius: 15, fillsAvailableSpace: false) {
+            HStack {
+                Text(title).fontWeight(.medium).foregroundStyle(Color.slate800)
+                Spacer()
+                trailing
+            }
+            .padding(.horizontal, 13)
+            .frame(maxWidth: .infinity, minHeight: 50)
         }
-        .padding(.horizontal, 13)
-        .frame(height: 50)
-        .background(Color.themeSurface.opacity(0.26), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .overlay { RoundedRectangle(cornerRadius: 15).stroke(Color.themeBorder.opacity(0.46), lineWidth: 1) }
     }
 }
 
 private struct AboutCard: View {
     var body: some View {
-        GlassCard(cornerRadius: 22) {
+        NativeLiquidGlassCard(cornerRadius: 22) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("关于 zhz-switch").font(.system(size: 16, weight: .bold)).foregroundStyle(Color.slate900)
                     Text("版本 1.2.6 · macOS Sonoma · MIT License").font(.system(size: 12)).foregroundStyle(Color.slate600)
                 }
                 Spacer()
-                HeaderButton(title: "检查更新", icon: "arrow.clockwise")
-                HeaderButton(title: "贡献者", icon: "person.2")
+                HeaderButton(title: "检查更新", icon: "arrow.clockwise", usesLiquidGlass: true)
+                HeaderButton(title: "贡献者", icon: "person.2", usesLiquidGlass: true)
             }
             .padding(.horizontal, 19)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)

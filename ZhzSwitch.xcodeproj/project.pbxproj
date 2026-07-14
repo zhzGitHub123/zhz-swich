@@ -23,6 +23,7 @@
 		1A000001000000000000000E /* GlassComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000114 /* GlassComponents.swift */; };
 		1A000001000000000000000F /* DashboardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000115 /* DashboardComponents.swift */; };
 		1A0000010000000000000019 /* NativeLiquidGlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011F /* NativeLiquidGlassCard.swift */; };
+		1A000001000000000000001B /* NativeLiquidGlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000121 /* NativeLiquidGlassButton.swift */; };
 		1A0000010000000000000014 /* ConfigurationDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011A /* ConfigurationDashboardView.swift */; };
 		1A0000010000000000000010 /* ProvidersDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000116 /* ProvidersDashboardView.swift */; };
 		1A0000010000000000000011 /* UsageDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000117 /* UsageDashboardView.swift */; };
@@ -53,6 +54,7 @@
 		1A0000010000000000000114 /* GlassComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassComponents.swift; sourceTree = "<group>"; };
 		1A0000010000000000000115 /* DashboardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardComponents.swift; sourceTree = "<group>"; };
 		1A000001000000000000011F /* NativeLiquidGlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLiquidGlassCard.swift; sourceTree = "<group>"; };
+		1A0000010000000000000121 /* NativeLiquidGlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLiquidGlassButton.swift; sourceTree = "<group>"; };
 		1A000001000000000000011A /* ConfigurationDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationDashboardView.swift; sourceTree = "<group>"; };
 		1A0000010000000000000116 /* ProvidersDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvidersDashboardView.swift; sourceTree = "<group>"; };
 		1A0000010000000000000117 /* UsageDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageDashboardView.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				1A0000010000000000000114 /* GlassComponents.swift */,
 				1A0000010000000000000115 /* DashboardComponents.swift */,
 				1A000001000000000000011F /* NativeLiquidGlassCard.swift */,
+				1A0000010000000000000121 /* NativeLiquidGlassButton.swift */,
 				1A000001000000000000011A /* ConfigurationDashboardView.swift */,
 				1A0000010000000000000116 /* ProvidersDashboardView.swift */,
 				1A0000010000000000000117 /* UsageDashboardView.swift */,
@@ -230,6 +233,7 @@
 				1A000001000000000000000E /* GlassComponents.swift in Sources */,
 				1A000001000000000000000F /* DashboardComponents.swift in Sources */,
 				1A0000010000000000000019 /* NativeLiquidGlassCard.swift in Sources */,
+				1A000001000000000000001B /* NativeLiquidGlassButton.swift in Sources */,
 				1A0000010000000000000014 /* ConfigurationDashboardView.swift in Sources */,
 				1A0000010000000000000010 /* ProvidersDashboardView.swift in Sources */,
 				1A0000010000000000000011 /* UsageDashboardView.swift in Sources */,

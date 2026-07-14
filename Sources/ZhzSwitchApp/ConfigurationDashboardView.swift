@@ -26,6 +26,11 @@ private struct ActiveConfigurationCard: View {
     let snapshot: ActiveConfigurationSnapshot
     let tint: Color
 
+    private let primaryText = Color.white.opacity(0.96)
+    private let secondaryText = Color.white.opacity(0.72)
+    private let tertiaryText = Color.white.opacity(0.58)
+    private let divider = Color.white.opacity(0.24)
+
     var body: some View {
         NativeLiquidGlassCard(cornerRadius: 26) {
             VStack(alignment: .leading, spacing: 20) {
@@ -42,10 +47,10 @@ private struct ActiveConfigurationCard: View {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(snapshot.title)
                             .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color.slate900)
+                            .foregroundStyle(primaryText)
                         Text(snapshot.configurationPath)
                             .font(.system(size: 11, weight: .medium, design: .monospaced))
-                            .foregroundStyle(Color.slate500)
+                            .foregroundStyle(secondaryText)
                             .lineLimit(1)
                             .truncationMode(.middle)
                     }
@@ -60,16 +65,16 @@ private struct ActiveConfigurationCard: View {
                         .background((snapshot.isAvailable ? Color.green : Color.orange).opacity(0.12), in: Capsule())
                 }
 
-                Divider().overlay(Color.themeBorder.opacity(0.55))
+                Divider().overlay(divider)
 
                 if snapshot.items.isEmpty {
                     VStack(spacing: 10) {
                         Image(systemName: "doc.text.magnifyingglass")
                             .font(.system(size: 26, weight: .medium))
-                            .foregroundStyle(Color.slate500.opacity(0.75))
+                            .foregroundStyle(tertiaryText)
                         Text(snapshot.message)
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Color.slate600)
+                            .foregroundStyle(secondaryText)
                             .multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity, minHeight: 250)
@@ -78,7 +83,7 @@ private struct ActiveConfigurationCard: View {
                         ForEach(Array(snapshot.items.enumerated()), id: \.element.id) { index, item in
                             ConfigurationValueRow(item: item)
                             if index < snapshot.items.count - 1 {
-                                Divider().overlay(Color.themeBorder.opacity(0.35))
+                                Divider().overlay(divider.opacity(0.72))
                             }
                         }
                     }
@@ -95,16 +100,19 @@ private struct ActiveConfigurationCard: View {
 private struct ConfigurationValueRow: View {
     let item: ActiveConfigurationItem
 
+    private let primaryText = Color.white.opacity(0.92)
+    private let secondaryText = Color.white.opacity(0.66)
+
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 18) {
             Text(item.label)
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(Color.slate500)
+                .foregroundStyle(secondaryText)
                 .frame(width: 92, alignment: .leading)
 
             Text(item.value)
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundStyle(Color.slate800)
+                .foregroundStyle(primaryText)
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

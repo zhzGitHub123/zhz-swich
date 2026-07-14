@@ -18,7 +18,12 @@ struct SkillsDashboard: View {
                 )
                 Spacer(minLength: 12)
                 SkillSearchField(text: $store.searchText)
-                HeaderButton(title: "安装", icon: "plus", emphasized: true) {
+                HeaderButton(
+                    title: "安装",
+                    icon: "plus",
+                    emphasized: true,
+                    usesLiquidGlass: true
+                ) {
                     chooseSkillDirectory()
                 }
             }
@@ -85,30 +90,29 @@ private struct SkillSearchField: View {
     @Binding var text: String
 
     var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-            TextField("搜索技能…", text: $text)
-                .textFieldStyle(.plain)
-            if !text.isEmpty {
-                Button {
-                    text = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
+        NativeLiquidGlassCard(cornerRadius: 13, fillsAvailableSpace: false) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                TextField("搜索技能…", text: $text)
+                    .textFieldStyle(.plain)
+                if !text.isEmpty {
+                    NativeLiquidGlassButton(cornerRadius: 9, action: clearSearch) {
+                        Image(systemName: "xmark.circle.fill")
+                            .frame(width: 24, height: 24)
+                    }
+                    .accessibilityLabel("清空搜索")
                 }
-                .buttonStyle(.plain)
-                .interactivePointerStyle()
-                .accessibilityLabel("清空搜索")
             }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(Color.slate600)
+            .padding(.horizontal, 12)
+            .frame(width: 190)
+            .frame(minHeight: 36)
         }
-        .font(.system(size: 12, weight: .medium))
-        .foregroundStyle(Color.slate600)
-        .padding(.horizontal, 12)
-        .frame(width: 190, height: 36)
-        .background(Color.themeSurface.opacity(0.35), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 13, style: .continuous)
-                .stroke(Color.themeBorder.opacity(0.58), lineWidth: 1)
-        }
+    }
+
+    private func clearSearch() {
+        text = ""
     }
 }
 
@@ -117,7 +121,7 @@ private struct SkillSummaryCard: View {
     @ObservedObject var store: SkillListStore
 
     var body: some View {
-        GlassCard(tint: .orange, cornerRadius: 24) {
+        NativeLiquidGlassCard(tint: .orange, cornerRadius: 24) {
             HStack(spacing: 18) {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("实时数据")
@@ -138,7 +142,11 @@ private struct SkillSummaryCard: View {
                     if store.systemCount > 0 {
                         SkillMetric(title: "系统", value: store.systemCount, color: .blue)
                     }
-                    HeaderButton(title: "刷新", icon: "arrow.clockwise") {
+                    HeaderButton(
+                        title: "刷新",
+                        icon: "arrow.clockwise",
+                        usesLiquidGlass: true
+                    ) {
                         store.refresh()
                     }
                 }
@@ -172,7 +180,7 @@ private struct SkillErrorBanner: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        GlassCard(tint: .red, cornerRadius: 18) {
+        NativeLiquidGlassCard(tint: .red, cornerRadius: 18) {
             HStack(alignment: .top, spacing: 10) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
@@ -181,11 +189,10 @@ private struct SkillErrorBanner: View {
                     .foregroundStyle(Color.slate700)
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer()
-                Button(action: onDismiss) {
+                NativeLiquidGlassButton(tint: .red, cornerRadius: 9, action: onDismiss) {
                     Image(systemName: "xmark")
+                        .frame(width: 28, height: 28)
                 }
-                .buttonStyle(.plain)
-                .interactivePointerStyle()
                 .accessibilityLabel("关闭提示")
             }
             .padding(14)
@@ -197,7 +204,7 @@ private struct SkillEmptyState: View {
     let hasQuery: Bool
 
     var body: some View {
-        GlassCard(tint: .orange, cornerRadius: 22) {
+        NativeLiquidGlassCard(tint: .orange, cornerRadius: 22) {
             VStack(spacing: 10) {
                 Image(systemName: hasQuery ? "magnifyingglass" : "sparkles")
                     .font(.system(size: 28, weight: .medium))
@@ -220,7 +227,7 @@ private struct SkillCard: View {
     let onToggle: () -> Void
 
     var body: some View {
-        GlassCard(tint: tint, cornerRadius: 22) {
+        NativeLiquidGlassCard(tint: tint, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     ZStack {

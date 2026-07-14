@@ -18,7 +18,7 @@ struct SidebarView: View {
     ]
 
     var body: some View {
-        GlassCard(cornerRadius: 28) {
+        NativeLiquidGlassCard(cornerRadius: 28) {
             VStack(alignment: .leading, spacing: 0) {
                 SidebarBrandHeader()
                     .padding(.bottom, 14)

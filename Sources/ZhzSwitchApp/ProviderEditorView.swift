@@ -98,9 +98,20 @@ struct ProviderEditorView: View {
             }
 
             Spacer()
-            HeaderButton(title: "取消", icon: "xmark", action: { dismiss() })
+            HeaderButton(
+                title: "取消",
+                icon: "xmark",
+                usesLiquidGlass: true,
+                action: { dismiss() }
+            )
                 .keyboardShortcut(.cancelAction)
-            HeaderButton(title: "保存", icon: "checkmark", emphasized: true, action: save)
+            HeaderButton(
+                title: "保存",
+                icon: "checkmark",
+                emphasized: true,
+                usesLiquidGlass: true,
+                action: save
+            )
                 .keyboardShortcut(.defaultAction)
         }
         .padding(.horizontal, 26)
@@ -109,7 +120,7 @@ struct ProviderEditorView: View {
     }
 
     private var identitySection: some View {
-        GlassCard(tint: .blue, cornerRadius: 22, isHoverEffectEnabled: false) {
+        NativeLiquidGlassCard(tint: .blue, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 16) {
                 EditorSectionTitle(icon: "person.text.rectangle", title: "基本信息", subtitle: "用于识别和管理这个提供商")
                 HStack(alignment: .top, spacing: 18) {
@@ -124,7 +135,7 @@ struct ProviderEditorView: View {
     }
 
     private var endpointSection: some View {
-        GlassCard(tint: .purple, cornerRadius: 22, isHoverEffectEnabled: false) {
+        NativeLiquidGlassCard(tint: .purple, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 12) {
                     EditorSectionTitle(icon: "point.3.connected.trianglepath.dotted", title: "请求地址", subtitle: "连接兼容的 API 服务端点")
@@ -136,7 +147,7 @@ struct ProviderEditorView: View {
                     .textFieldStyle(EditorTextFieldStyle())
                 Label("填写兼容 Claude API 的服务端点地址，不要以斜杠结尾", systemImage: "lightbulb.fill")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Color(hex: 0xB45309))
+                    .foregroundStyle(Color.adaptive(light: 0xB45309, dark: 0xFCD34D))
                     .padding(12)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.yellow.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
@@ -154,13 +165,9 @@ struct ProviderEditorView: View {
     }
 
     private var advancedSection: some View {
-        GlassCard(tint: .white, cornerRadius: 20, isHoverEffectEnabled: false) {
+        NativeLiquidGlassCard(cornerRadius: 20) {
             VStack(alignment: .leading, spacing: 8) {
-                Button {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        showsAdvancedOptions.toggle()
-                    }
-                } label: {
+                NativeLiquidGlassButton(cornerRadius: 12, action: toggleAdvancedOptions) {
                     HStack(spacing: 10) {
                         Image(systemName: "slider.horizontal.3")
                             .foregroundStyle(.purple)
@@ -171,9 +178,10 @@ struct ProviderEditorView: View {
                             .foregroundStyle(Color.slate500)
                     }
                     .foregroundStyle(Color.slate900)
+                    .padding(.horizontal, 12)
+                    .frame(maxWidth: .infinity, minHeight: 44)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
                 .accessibilityValue(showsAdvancedOptions ? "已展开" : "已折叠")
 
                 Text("包含 API 格式、认证字段、模型映射等配置。大多数场景下保持默认即可。")
@@ -194,7 +202,7 @@ struct ProviderEditorView: View {
     }
 
     private var configurationSection: some View {
-        GlassCard(tint: .blue, cornerRadius: 22, isHoverEffectEnabled: false) {
+        NativeLiquidGlassCard(tint: .blue, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     EditorSectionTitle(icon: "curlybraces.square", title: "配置 JSON", subtitle: "保存时校验格式并写入配置")
@@ -212,7 +220,12 @@ struct ProviderEditorView: View {
                     .overlay { RoundedRectangle(cornerRadius: 13).stroke(Color.themeBorder.opacity(0.66)) }
 
                 HStack {
-                    HeaderButton(title: "格式化", icon: "wand.and.stars", action: formatJSON)
+                    HeaderButton(
+                        title: "格式化",
+                        icon: "wand.and.stars",
+                        usesLiquidGlass: true,
+                        action: formatJSON
+                    )
                     Spacer()
                     if let jsonMessage {
                         Text(jsonMessage)
@@ -231,6 +244,12 @@ struct ProviderEditorView: View {
             title: "计费配置",
             isEnabled: $usesStandaloneBillingConfiguration
         )
+    }
+
+    private func toggleAdvancedOptions() {
+        withAnimation(.easeOut(duration: 0.2)) {
+            showsAdvancedOptions.toggle()
+        }
     }
 
     private func save() {
@@ -363,20 +382,20 @@ private struct StandaloneConfigurationRow: View {
     @Binding var isEnabled: Bool
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .frame(width: 24)
-                .foregroundStyle(Color.slate600)
-            Text(title)
-                .fontWeight(.semibold)
-                .foregroundStyle(Color.slate900)
-            Spacer()
-            Toggle("使用单独配置", isOn: $isEnabled)
-                .toggleStyle(EditorToggleStyle())
+        NativeLiquidGlassCard(cornerRadius: 16, fillsAvailableSpace: false) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .frame(width: 24)
+                    .foregroundStyle(Color.slate600)
+                Text(title)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.slate900)
+                Spacer()
+                Toggle("使用单独配置", isOn: $isEnabled)
+                    .toggleStyle(EditorToggleStyle())
+            }
+            .padding(16)
         }
-        .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay { RoundedRectangle(cornerRadius: 16).stroke(Color.themeBorder.opacity(0.58)) }
     }
 }
 

@@ -101,6 +101,7 @@ struct ModuleHeader: View {
     let subtitle: String
     var eyebrow = "模块"
     var actions: [ModuleAction] = []
+    var usesLiquidGlassButtons = false
     var onAction: ((ModuleAction) -> Void)? = nil
 
     var body: some View {
@@ -123,6 +124,7 @@ struct ModuleHeader: View {
                         title: action.title,
                         icon: action.icon,
                         emphasized: action.emphasized,
+                        usesLiquidGlass: usesLiquidGlassButtons,
                         action: onAction.map { handler in { handler(action) } }
                     )
                 }
@@ -135,6 +137,7 @@ struct HeaderButton: View {
     let title: String
     let icon: String
     var emphasized = false
+    var usesLiquidGlass = false
     var action: (() -> Void)? = nil
 
     @Environment(\.colorScheme) private var colorScheme
@@ -143,11 +146,29 @@ struct HeaderButton: View {
     @ViewBuilder
     var body: some View {
         if let action {
-            Button(action: action) {
+            if usesLiquidGlass {
+                NativeLiquidGlassButton(
+                    tint: emphasized ? .purple : nil,
+                    cornerRadius: 13,
+                    action: action
+                ) {
+                    content
+                }
+            } else {
+                Button(action: action) {
+                    content
+                }
+                .buttonStyle(.plain)
+                .interactivePointerStyle()
+            }
+        } else if usesLiquidGlass {
+            NativeLiquidGlassCard(
+                tint: emphasized ? .purple : nil,
+                cornerRadius: 13,
+                fillsAvailableSpace: false
+            ) {
                 content
             }
-            .buttonStyle(.plain)
-            .interactivePointerStyle()
         } else {
             content
         }
@@ -166,43 +187,49 @@ struct HeaderButton: View {
         .padding(.horizontal, 12)
         .frame(minWidth: 74, minHeight: 36)
         .background {
-            RoundedRectangle(cornerRadius: 13, style: .continuous)
-                .fill(
-                    emphasized
-                    ? AnyShapeStyle(
+            if !usesLiquidGlass {
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .fill(
+                        emphasized
+                        ? AnyShapeStyle(
+                            LinearGradient(
+                                colors: [
+                                    .cyan.opacity(isHovered ? 0.62 : 0.50),
+                                    .purple.opacity(isHovered ? 0.46 : 0.35)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        : AnyShapeStyle(Color.themeSurface.opacity(surfaceOpacity))
+                    )
+            }
+        }
+        .overlay {
+            if !usesLiquidGlass {
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .stroke(
                         LinearGradient(
                             colors: [
-                                .cyan.opacity(isHovered ? 0.62 : 0.50),
-                                .purple.opacity(isHovered ? 0.46 : 0.35)
+                                Color.themeBorder.opacity(borderLeadingOpacity),
+                                Color.themeBorder.opacity(isHovered ? 0.12 : 0.06)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
-                        )
+                        ),
+                        lineWidth: 0.75
                     )
-                    : AnyShapeStyle(Color.themeSurface.opacity(surfaceOpacity))
-                )
+            }
         }
-        .overlay {
-            RoundedRectangle(cornerRadius: 13, style: .continuous)
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color.themeBorder.opacity(borderLeadingOpacity),
-                            Color.themeBorder.opacity(isHovered ? 0.12 : 0.06)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 0.75
-                )
-        }
-        .offset(y: isHovered ? -1 : 0)
+        .offset(y: usesLiquidGlass ? 0 : isHovered ? -1 : 0)
         .shadow(
-            color: colorScheme == .dark
-            ? .black.opacity(isHovered ? 0.22 : 0.14)
-            : .indigo.opacity(isHovered ? 0.16 : 0.10),
-            radius: isHovered ? 10 : 7,
-            y: isHovered ? 5 : 3
+            color: usesLiquidGlass
+                ? .clear
+                : colorScheme == .dark
+                    ? .black.opacity(isHovered ? 0.22 : 0.14)
+                    : .indigo.opacity(isHovered ? 0.16 : 0.10),
+            radius: usesLiquidGlass ? 0 : isHovered ? 10 : 7,
+            y: usesLiquidGlass ? 0 : isHovered ? 5 : 3
         )
         .onHover { isHovered = $0 }
         .animation(.easeOut(duration: 0.18), value: isHovered)
@@ -249,12 +276,26 @@ struct VisualToggle: View {
 
 struct CompactIconButton: View {
     let icon: String
+    var usesLiquidGlass = false
 
+    @ViewBuilder
     var body: some View {
-        Image(systemName: icon)
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(Color.slate700)
-            .frame(width: 29, height: 29)
-            .background(Color.themeSurface.opacity(0.36), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        if usesLiquidGlass {
+            NativeLiquidGlassCard(cornerRadius: 10, fillsAvailableSpace: false) {
+                Image(systemName: icon)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.slate700)
+                    .frame(width: 29, height: 29)
+            }
+        } else {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(Color.slate700)
+                .frame(width: 29, height: 29)
+                .background(
+                    Color.themeSurface.opacity(0.36),
+                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                )
+        }
     }
 }

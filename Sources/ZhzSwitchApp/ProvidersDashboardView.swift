@@ -42,6 +42,7 @@ struct ProvidersDashboard: View {
                     ModuleAction(title: "导出", icon: "square.and.arrow.up"),
                     ModuleAction(title: "新增", icon: "plus", emphasized: true)
                 ],
+                usesLiquidGlassButtons: true,
                 onAction: { action in
                     if action.title == "新增" {
                         isAddingProvider = true
@@ -89,7 +90,7 @@ struct ProvidersDashboard: View {
                 }
                 .frame(height: 516)
             } else {
-                GlassCard(tint: .blue, cornerRadius: 24) {
+                NativeLiquidGlassCard(tint: .blue, cornerRadius: 24) {
                     ContentUnavailableView("暂无提供商", systemImage: "shippingbox", description: Text("点击右上角“新增”创建第一个提供商。"))
                         .frame(maxWidth: .infinity, minHeight: 320)
                 }
@@ -166,7 +167,7 @@ private struct FeaturedProviderCard: View {
     let onEdit: (() -> Void)?
 
     var body: some View {
-        GlassCard(tint: provider.tint, cornerRadius: 27) {
+        NativeLiquidGlassCard(tint: provider.tint, cornerRadius: 27) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 5) {
@@ -195,7 +196,12 @@ private struct FeaturedProviderCard: View {
 
                 HStack(spacing: 9) {
                     if let onEdit {
-                        HeaderButton(title: "编辑配置", icon: "slider.horizontal.3", action: onEdit)
+                        HeaderButton(
+                            title: "编辑配置",
+                            icon: "slider.horizontal.3",
+                            usesLiquidGlass: true,
+                            action: onEdit
+                        )
                     }
                 }
             }
@@ -210,20 +216,17 @@ private struct MetricCard: View {
     let value: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(label)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(Color.slate600)
-            Text(value)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(Color.slate900)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Color.themeSurface.opacity(0.25), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.themeBorder.opacity(0.45), lineWidth: 1)
+        NativeLiquidGlassCard(cornerRadius: 16, fillsAvailableSpace: false) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(label)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color.slate600)
+                Text(value)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.slate900)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(12)
         }
     }
 }
@@ -239,7 +242,7 @@ private struct ProviderTile: View {
     @State private var isHovered = false
 
     var body: some View {
-        GlassCard(tint: provider.tint, cornerRadius: 22) {
+        NativeLiquidGlassCard(tint: provider.tint, cornerRadius: 22) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     ProviderGlyph(provider: provider, size: 42)
@@ -335,25 +338,19 @@ private struct ProviderTileActionButton: View {
     @State private var isHovered = false
 
     var body: some View {
-        Button(action: action) {
+        NativeLiquidGlassButton(
+            tint: isDestructive ? .red : nil,
+            cornerRadius: 9,
+            action: action
+        ) {
             Image(systemName: icon)
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(foregroundColor)
                 .frame(width: 28, height: 28)
-                .background(
-                    backgroundColor,
-                    in: RoundedRectangle(cornerRadius: 9, style: .continuous)
-                )
-                .overlay {
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .stroke(borderColor, lineWidth: 1)
-                }
                 .offset(y: isHovered && !reduceMotion ? -1 : 0)
                 .shadow(color: shadowColor, radius: isHovered ? 6 : 0, y: isHovered ? 3 : 0)
         }
-        .buttonStyle(.plain)
         .onHover { isHovered = $0 }
-        .interactivePointerStyle()
         .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: isHovered)
         .help(help)
         .accessibilityLabel(accessibilityLabel)
@@ -364,20 +361,6 @@ private struct ProviderTileActionButton: View {
             return isHovered ? .white : .red
         }
         return isHovered ? .slate900 : .slate700
-    }
-
-    private var backgroundColor: Color {
-        if isDestructive {
-            return Color.red.opacity(isHovered ? 0.82 : 0.10)
-        }
-        return Color.themeSurface.opacity(isHovered ? 0.62 : 0.30)
-    }
-
-    private var borderColor: Color {
-        if isDestructive {
-            return Color.red.opacity(isHovered ? 0.90 : 0.22)
-        }
-        return Color.themeBorder.opacity(isHovered ? 0.82 : 0.52)
     }
 
     private var shadowColor: Color {
@@ -435,9 +418,9 @@ private enum ProviderStatus {
 
     var foreground: Color {
         switch self {
-        case .active: Color(hex: 0x047857)
+        case .active: Color.adaptive(light: 0x047857, dark: 0x6EE7B7)
         case .idle: Color.slate700
-        case .warning: Color(hex: 0xB45309)
+        case .warning: Color.adaptive(light: 0xB45309, dark: 0xFCD34D)
         }
     }
 

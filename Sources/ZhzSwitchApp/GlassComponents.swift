@@ -6,6 +6,7 @@ struct GlassCard<Content: View>: View {
     var cornerRadius: CGFloat = 24
     var showsBackgroundGradient = true
     var isHoverEffectEnabled = false
+    var fillsAvailableSpace = true
     @ViewBuilder let content: Content
     @State private var isHovered = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -16,7 +17,11 @@ struct GlassCard<Content: View>: View {
         let palette = AppThemePalette.resolve(family: themeFamily, colorScheme: colorScheme)
 
         content
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .frame(
+                maxWidth: fillsAvailableSpace ? .infinity : nil,
+                maxHeight: fillsAvailableSpace ? .infinity : nil,
+                alignment: .topLeading
+            )
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(.ultraThinMaterial)
