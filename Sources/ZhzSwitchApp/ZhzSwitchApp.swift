@@ -7,6 +7,7 @@ struct ZhzSwitchApp: App {
         WindowGroup("zhz-switch", id: "main") {
             MainWindowView()
         }
+        .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1_180, height: 720)
         .windowResizability(.contentMinSize)
 

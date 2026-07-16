@@ -125,7 +125,17 @@ struct MainWindowView: View {
     @ViewBuilder
     private var selectedModuleView: some View {
         switch selectedModule {
-        case .dashboard: ConfigurationDashboard()
+        case .dashboard:
+            ConfigurationDashboard(
+                providerStore: providerStore,
+                onOpenProviders: { family in
+                    themeFamily = family
+                    selectedModule = .providers
+                },
+                onNavigate: { module in
+                    selectedModule = module
+                }
+            )
         case .providers: ProvidersDashboard(family: themeFamily, store: providerStore)
         case .mcp: McpDashboard()
         case .prompts: PromptsDashboard()
@@ -149,6 +159,10 @@ enum ModuleKey: String, Hashable {
 struct AuroraBackground: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.appThemeFamily) private var themeFamily
+    @AppStorage(AppBackground.styleKey) private var backgroundStyle = AppBackground.Style.house
+    @AppStorage(AppBackground.customImageRevisionKey) private var customImageRevision = 0
+    @State private var defaultImage = AppBackground.bundledDefaultImage()
+    @State private var customImage = AppBackground.customImage()
 
     var body: some View {
         let palette = AppThemePalette.resolve(family: themeFamily, colorScheme: colorScheme)
@@ -157,37 +171,91 @@ struct AuroraBackground: View {
             let diameter = max(max(proxy.size.width * 0.95, proxy.size.height * 1.40), 900)
 
             ZStack {
-                LinearGradient(
-                    colors: palette.background,
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-
-                if let imageURL = Bundle.main.url(forResource: "test", withExtension: "png"),
-                   let backgroundImage = NSImage(contentsOf: imageURL) {
-                    Image(nsImage: backgroundImage)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: proxy.size.width, height: proxy.size.height)
-                        .clipped()
-                } else {
-                    GradientHemisphere(
-                        colors: palette.hemisphereColors,
-                        rimColors: palette.hemisphereRim,
-                        glow: palette.hemisphereGlow,
-                        diameter: diameter
-                    )
-                    .frame(width: diameter, height: diameter)
-                    .position(x: proxy.size.width / 2, y: -diameter * 0.18)
-
-                    NoiseTexture()
-                        .blendMode(.overlay)
-                        .opacity(palette.noiseOpacity)
+                switch backgroundStyle {
+                case .house:
+                    if let defaultImage {
+                        backgroundImage(defaultImage, size: proxy.size)
+                    } else {
+                        themeAurora(palette: palette, size: proxy.size, diameter: diameter)
+                    }
+                case .aurora:
+                    themeAurora(palette: palette, size: proxy.size, diameter: diameter)
+                case .softGlow:
+                    softGlow(palette: palette, size: proxy.size)
+                case .custom:
+                    if let customImage {
+                        backgroundImage(customImage, size: proxy.size)
+                    } else {
+                        themeAurora(palette: palette, size: proxy.size, diameter: diameter)
+                    }
                 }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .ignoresSafeArea()
+        .onChange(of: customImageRevision) {
+            customImage = AppBackground.customImage()
+        }
+    }
+
+    private func backgroundImage(_ image: NSImage, size: CGSize) -> some View {
+        Image(nsImage: image)
+            .resizable()
+            .scaledToFill()
+            .frame(width: size.width, height: size.height)
+            .clipped()
+    }
+
+    private func themeAurora(
+        palette: AppThemePalette,
+        size: CGSize,
+        diameter: CGFloat
+    ) -> some View {
+        ZStack {
+            LinearGradient(
+                colors: palette.background,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            GradientHemisphere(
+                colors: palette.hemisphereColors,
+                rimColors: palette.hemisphereRim,
+                glow: palette.hemisphereGlow,
+                diameter: diameter
+            )
+            .frame(width: diameter, height: diameter)
+            .position(x: size.width / 2, y: -diameter * 0.18)
+
+            NoiseTexture()
+                .blendMode(.overlay)
+                .opacity(palette.noiseOpacity)
+        }
+    }
+
+    private func softGlow(palette: AppThemePalette, size: CGSize) -> some View {
+        ZStack {
+            LinearGradient(
+                colors: palette.background,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            RadialGradient(
+                colors: [themeFamily.accentColor.opacity(colorScheme == .dark ? 0.48 : 0.30), .clear],
+                center: .topTrailing,
+                startRadius: 20,
+                endRadius: max(size.width, size.height) * 0.75
+            )
+            RadialGradient(
+                colors: [palette.hemisphereGlow.opacity(0.34), .clear],
+                center: .bottomLeading,
+                startRadius: 10,
+                endRadius: max(size.width, size.height) * 0.62
+            )
+            NoiseTexture()
+                .blendMode(.overlay)
+                .opacity(palette.noiseOpacity * 0.65)
+        }
     }
 }
 

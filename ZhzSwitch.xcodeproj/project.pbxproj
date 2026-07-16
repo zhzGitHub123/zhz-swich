@@ -24,16 +24,18 @@
 		1A000001000000000000000F /* DashboardComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000115 /* DashboardComponents.swift */; };
 		1A0000010000000000000019 /* NativeLiquidGlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011F /* NativeLiquidGlassCard.swift */; };
 		1A000001000000000000001B /* NativeLiquidGlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000121 /* NativeLiquidGlassButton.swift */; };
+		1A000001000000000000001D /* NativeLiquidGlassContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000123 /* NativeLiquidGlassContainer.swift */; };
 		1A0000010000000000000014 /* ConfigurationDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011A /* ConfigurationDashboardView.swift */; };
 		1A0000010000000000000010 /* ProvidersDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000116 /* ProvidersDashboardView.swift */; };
 		1A0000010000000000000011 /* UsageDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000117 /* UsageDashboardView.swift */; };
 		1A0000010000000000000012 /* OtherDashboardViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000118 /* OtherDashboardViews.swift */; };
 		1A0000010000000000000013 /* ProviderEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000119 /* ProviderEditorView.swift */; };
 		1A0000010000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011B /* Assets.xcassets */; };
-		1A000001000000000000001A /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000120 /* test.png */; };
 		1A0000010000000000000016 /* SkillRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011C /* SkillRepository.swift */; };
 		1A0000010000000000000017 /* SkillListStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011D /* SkillListStore.swift */; };
 		1A0000010000000000000018 /* SkillsDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A000001000000000000011E /* SkillsDashboardView.swift */; };
+		1A000001000000000000001C /* AppBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000122 /* AppBackground.swift */; };
+		1A000001000000000000001A /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000010000000000000120 /* test.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,16 +57,18 @@
 		1A0000010000000000000115 /* DashboardComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardComponents.swift; sourceTree = "<group>"; };
 		1A000001000000000000011F /* NativeLiquidGlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLiquidGlassCard.swift; sourceTree = "<group>"; };
 		1A0000010000000000000121 /* NativeLiquidGlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLiquidGlassButton.swift; sourceTree = "<group>"; };
+		1A0000010000000000000123 /* NativeLiquidGlassContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLiquidGlassContainer.swift; sourceTree = "<group>"; };
 		1A000001000000000000011A /* ConfigurationDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationDashboardView.swift; sourceTree = "<group>"; };
 		1A0000010000000000000116 /* ProvidersDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvidersDashboardView.swift; sourceTree = "<group>"; };
 		1A0000010000000000000117 /* UsageDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageDashboardView.swift; sourceTree = "<group>"; };
 		1A0000010000000000000118 /* OtherDashboardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherDashboardViews.swift; sourceTree = "<group>"; };
 		1A0000010000000000000119 /* ProviderEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderEditorView.swift; sourceTree = "<group>"; };
 		1A000001000000000000011B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1A0000010000000000000120 /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		1A000001000000000000011C /* SkillRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillRepository.swift; sourceTree = "<group>"; };
 		1A000001000000000000011D /* SkillListStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillListStore.swift; sourceTree = "<group>"; };
 		1A000001000000000000011E /* SkillsDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillsDashboardView.swift; sourceTree = "<group>"; };
+		1A0000010000000000000122 /* AppBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackground.swift; sourceTree = "<group>"; };
+		1A0000010000000000000120 /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		1A0000010000000000000112 /* zhz swich.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "zhz swich.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -103,11 +107,13 @@
 			children = (
 				1A0000010000000000000101 /* ZhzSwitchApp.swift */,
 				1A0000010000000000000102 /* MainWindowView.swift */,
+				1A0000010000000000000122 /* AppBackground.swift */,
 				1A0000010000000000000113 /* SidebarView.swift */,
 				1A0000010000000000000114 /* GlassComponents.swift */,
 				1A0000010000000000000115 /* DashboardComponents.swift */,
 				1A000001000000000000011F /* NativeLiquidGlassCard.swift */,
 				1A0000010000000000000121 /* NativeLiquidGlassButton.swift */,
+				1A0000010000000000000123 /* NativeLiquidGlassContainer.swift */,
 				1A000001000000000000011A /* ConfigurationDashboardView.swift */,
 				1A0000010000000000000116 /* ProvidersDashboardView.swift */,
 				1A0000010000000000000117 /* UsageDashboardView.swift */,
@@ -219,6 +225,7 @@
 			files = (
 				1A0000010000000000000001 /* ZhzSwitchApp.swift in Sources */,
 				1A0000010000000000000002 /* MainWindowView.swift in Sources */,
+				1A000001000000000000001C /* AppBackground.swift in Sources */,
 				1A0000010000000000000003 /* TargetAdapter.swift in Sources */,
 				1A0000010000000000000004 /* SwitchError.swift in Sources */,
 				1A0000010000000000000005 /* TargetApp.swift in Sources */,
@@ -234,6 +241,7 @@
 				1A000001000000000000000F /* DashboardComponents.swift in Sources */,
 				1A0000010000000000000019 /* NativeLiquidGlassCard.swift in Sources */,
 				1A000001000000000000001B /* NativeLiquidGlassButton.swift in Sources */,
+				1A000001000000000000001D /* NativeLiquidGlassContainer.swift in Sources */,
 				1A0000010000000000000014 /* ConfigurationDashboardView.swift in Sources */,
 				1A0000010000000000000010 /* ProvidersDashboardView.swift in Sources */,
 				1A0000010000000000000011 /* UsageDashboardView.swift in Sources */,

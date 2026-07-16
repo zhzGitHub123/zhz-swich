@@ -8,11 +8,6 @@ struct SkillsDashboard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             HStack(alignment: .bottom, spacing: 10) {
-                ModuleHeader(
-                    title: "技能管理",
-                    subtitle: "读取、安装与启停 \(family.displayName) 本地技能",
-                    eyebrow: "模块 / Skills / \(family.displayName)"
-                )
                 Spacer(minLength: 12)
                 SkillSearchField(text: $store.searchText)
                 HeaderButton(

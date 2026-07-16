@@ -17,7 +17,6 @@ struct NativeLiquidGlassCard<Content: View>: View {
                 )
                 .glassEffect(.clear, in: .rect(cornerRadius: cornerRadius))
                 .background(backgroundStyle, in: .rect(cornerRadius: cornerRadius))
-                .environment(\.colorScheme, .dark)
         } else {
             GlassCard(
                 tint: tint ?? .white,
@@ -32,12 +31,12 @@ struct NativeLiquidGlassCard<Content: View>: View {
 
     private var backgroundStyle: AnyShapeStyle {
         guard let tint else {
-            return AnyShapeStyle(Color.black.opacity(0.30))
+            return AnyShapeStyle(Color.glassScrim.opacity(0.30))
         }
 
         return AnyShapeStyle(
             LinearGradient(
-                colors: [.black.opacity(0.32), tint.opacity(0.18)],
+                colors: [Color.glassScrim.opacity(0.32), tint.opacity(0.18)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )

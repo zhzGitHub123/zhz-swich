@@ -17,10 +17,7 @@ struct UsageDashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            ModuleHeader(
-                title: "使用统计 · 成本",
-                subtitle: "追踪 API 用量与花销趋势",
-                eyebrow: "模块 / Usage",
+            ModuleActionsBar(
                 actions: [
                     ModuleAction(title: "过去 7 天", icon: "calendar"),
                     ModuleAction(title: "导出 CSV", icon: "square.and.arrow.up")
@@ -111,7 +108,7 @@ private struct ProviderDistributionCard: View {
                                 .foregroundStyle(Color.slate700)
                                 .frame(width: 62, alignment: .leading)
                             GeometryReader { proxy in
-                                Capsule().fill(.white.opacity(0.30))
+                                Capsule().fill(Color.themeSeparator.opacity(0.30))
                                     .overlay(alignment: .leading) {
                                         Capsule()
                                             .fill(LinearGradient(colors: [item.2.opacity(0.55), item.2], startPoint: .leading, endPoint: .trailing))
@@ -211,7 +208,7 @@ private struct TrendChartCard: View {
                             var grid = Path()
                             grid.move(to: CGPoint(x: 0, y: y))
                             grid.addLine(to: CGPoint(x: size.width, y: y))
-                            context.stroke(grid, with: .color(.white.opacity(0.45)), lineWidth: 1)
+                            context.stroke(grid, with: .color(Color.themeSeparator.opacity(0.45)), lineWidth: 1)
                         }
                     }
 
@@ -276,7 +273,7 @@ private struct RequestLogCard: View {
                     VStack(spacing: 0) {
                         LogRow(values: ["时间", "应用", "提供商", "模型", "输入", "输出", "成本"], widths: widths, header: true)
                         ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                            Divider().overlay(.white.opacity(0.44))
+                            Divider().overlay(Color.themeSeparator.opacity(0.44))
                             LogRow(values: row, widths: widths)
                         }
                     }

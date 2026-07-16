@@ -1,4 +1,6 @@
+import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 // MARK: - MCP
 
@@ -7,9 +9,7 @@ struct McpDashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
-            ModuleHeader(
-                title: "MCP 服务器",
-                subtitle: "连接工具与数据源",
+            ModuleActionsBar(
                 actions: [
                     ModuleAction(title: "同步", icon: "arrow.clockwise"),
                     ModuleAction(title: "导入", icon: "square.and.arrow.down"),
@@ -176,9 +176,7 @@ struct PromptsDashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
-            ModuleHeader(
-                title: "提示词库",
-                subtitle: "可复用的 AI 提示词预设",
+            ModuleActionsBar(
                 actions: [
                     ModuleAction(title: "导入", icon: "square.and.arrow.down"),
                     ModuleAction(title: "导出", icon: "square.and.arrow.up"),
@@ -271,48 +269,239 @@ struct SettingsDashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            ModuleHeader(title: "系统设置", subtitle: "通用偏好与数据管理")
             HStack(alignment: .top, spacing: 18) {
-                AppearanceSettingsCard(themeFamily: themeFamily, themeMode: $themeMode)
+                AppearanceSettingsCard(themeMode: $themeMode)
                 DataSettingsCard()
             }
+            BackgroundSettingsCard(themeFamily: themeFamily)
             AboutCard()
         }
     }
 }
 
-private struct AppearanceSettingsCard: View {
+private struct BackgroundSettingsCard: View {
     let themeFamily: AppThemeFamily
+
+    @AppStorage(AppBackground.styleKey) private var backgroundStyle = AppBackground.Style.house
+    @AppStorage(AppBackground.customImageRevisionKey) private var customImageRevision = 0
+    @State private var isImporterPresented = false
+    @State private var importErrorMessage = ""
+    @State private var showsImportError = false
+
+    private var availableStyles: [AppBackground.Style] {
+        var styles = AppBackground.builtInStyles
+        if AppBackground.customImageURL() != nil || backgroundStyle == .custom {
+            styles.append(.custom)
+        }
+        return styles
+    }
+
+    var body: some View {
+        NativeLiquidGlassCard(tint: .cyan, cornerRadius: 23) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("桌面背景")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color.slate900)
+                        Text("选择内置背景，或导入自己的图片")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Color.slate600)
+                    }
+                    Spacer()
+                    HeaderButton(
+                        title: "选择图片",
+                        icon: "photo.badge.plus",
+                        usesLiquidGlass: true,
+                        action: { isImporterPresented = true }
+                    )
+                }
+
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: 180, maximum: 280), spacing: 12)],
+                    spacing: 12
+                ) {
+                    ForEach(availableStyles) { style in
+                        BackgroundChoiceCard(
+                            style: style,
+                            themeFamily: themeFamily,
+                            customImageRevision: customImageRevision,
+                            isSelected: backgroundStyle == style
+                        ) {
+                            withAnimation(.easeOut(duration: 0.20)) {
+                                backgroundStyle = style
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(19)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(minHeight: 248)
+        .fileImporter(
+            isPresented: $isImporterPresented,
+            allowedContentTypes: [.image],
+            onCompletion: handleImport
+        )
+        .alert("无法使用背景图片", isPresented: $showsImportError) {
+            Button("好", role: .cancel) {}
+        } message: {
+            Text(importErrorMessage)
+        }
+    }
+
+    private func handleImport(_ result: Result<URL, Error>) {
+        do {
+            let sourceURL = try result.get()
+            try AppBackground.importCustomImage(from: sourceURL)
+            customImageRevision += 1
+            withAnimation(.easeOut(duration: 0.20)) {
+                backgroundStyle = .custom
+            }
+        } catch {
+            let nsError = error as NSError
+            guard nsError.code != NSUserCancelledError else { return }
+            importErrorMessage = error.localizedDescription
+            showsImportError = true
+        }
+    }
+}
+
+private struct BackgroundChoiceCard: View {
+    let style: AppBackground.Style
+    let themeFamily: AppThemeFamily
+    let customImageRevision: Int
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 8) {
+                BackgroundStyleThumbnail(
+                    style: style,
+                    themeFamily: themeFamily,
+                    customImageRevision: customImageRevision
+                )
+                .frame(height: 82)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(style.title)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(Color.slate900)
+                        Text(style.subtitle)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Color.slate600)
+                    }
+                    Spacer()
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(isSelected ? Color.accentColor : Color.slate500)
+                }
+            }
+            .padding(8)
+            .background(Color.themeSurface.opacity(isSelected ? 0.26 : 0.12), in: RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        isSelected ? Color.accentColor.opacity(0.78) : Color.themeBorder.opacity(0.24),
+                        lineWidth: isSelected ? 1.5 : 0.75
+                    )
+            }
+        }
+        .buttonStyle(.plain)
+        .interactivePointerStyle()
+        .accessibilityLabel("\(style.title)，\(style.subtitle)")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+private struct BackgroundStyleThumbnail: View {
+    let style: AppBackground.Style
+    let themeFamily: AppThemeFamily
+    let customImageRevision: Int
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        let palette = AppThemePalette.resolve(family: themeFamily, colorScheme: colorScheme)
+
+        GeometryReader { proxy in
+            ZStack {
+                switch style {
+                case .house:
+                    imagePreview(AppBackground.bundledDefaultImage(), size: proxy.size, palette: palette)
+                case .aurora:
+                    LinearGradient(colors: palette.background, startPoint: .topLeading, endPoint: .bottomTrailing)
+                    RadialGradient(
+                        colors: [palette.hemisphereColors.first?.opacity(0.90) ?? .purple, .clear],
+                        center: .top,
+                        startRadius: 4,
+                        endRadius: proxy.size.width * 0.72
+                    )
+                case .softGlow:
+                    LinearGradient(colors: palette.background, startPoint: .topLeading, endPoint: .bottomTrailing)
+                    RadialGradient(
+                        colors: [themeFamily.accentColor.opacity(0.58), .clear],
+                        center: .topTrailing,
+                        startRadius: 2,
+                        endRadius: proxy.size.width * 0.82
+                    )
+                case .custom:
+                    imagePreview(AppBackground.customImage(), size: proxy.size, palette: palette)
+                        .id(customImageRevision)
+                }
+            }
+            .frame(width: proxy.size.width, height: proxy.size.height)
+        }
+    }
+
+    @ViewBuilder
+    private func imagePreview(_ image: NSImage?, size: CGSize, palette: AppThemePalette) -> some View {
+        if let image {
+            Image(nsImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: size.width, height: size.height)
+                .clipped()
+        } else {
+            LinearGradient(colors: palette.background, startPoint: .topLeading, endPoint: .bottomTrailing)
+            Image(systemName: "photo")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(Color.slate600)
+        }
+    }
+}
+
+private struct AppearanceSettingsCard: View {
     @Binding var themeMode: AppThemeMode
 
     var body: some View {
-        NativeLiquidGlassCard(tint: .blue, cornerRadius: 23) {
+        NativeLiquidGlassContainer(spacing: 0) {
             VStack(alignment: .leading, spacing: 15) {
-                HStack {
-                    Text("外观").font(.system(size: 16, weight: .bold)).foregroundStyle(Color.slate900)
-                    Spacer()
-                    Text("\(themeFamily.displayName) 主题")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(Color.slate600)
-                }
                 HStack(spacing: 10) {
                     ForEach(AppThemeMode.allCases) { mode in
                         AppearanceChoice(mode: mode, active: themeMode == mode) {
-                            withAnimation(.easeOut(duration: 0.20)) {
+                            withAnimation(.smooth(duration: 0.22)) {
                                 themeMode = mode
                             }
                         }
                     }
                 }
-                SettingsRow(title: "开机启动") { VisualToggle(enabled: true) }
-                SettingsRow(title: "最小化到托盘") { VisualToggle(enabled: true) }
-                SettingsRow(title: "启用胶片颗粒") { VisualToggle(enabled: false) }
-                SettingsRow(title: "启用扫描线纹理") { VisualToggle(enabled: true) }
+                SettingsRow(title: "开机启动") {
+                    VisualToggle(enabled: true, accessibilityLabel: "开机启动")
+                }
+                SettingsRow(title: "最小化到托盘") {
+                    VisualToggle(enabled: true, accessibilityLabel: "最小化到托盘")
+                }
             }
-            .padding(19)
+            .padding(.horizontal, 19)
+            .padding(.bottom, 19)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 420)
+        .frame(height: 420, alignment: .top)
     }
 }
 
@@ -321,23 +510,58 @@ private struct AppearanceChoice: View {
     let active: Bool
     let action: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var selectionEffectTrigger = 0
+
     var body: some View {
         NativeLiquidGlassButton(
             tint: active ? .accentColor : nil,
             cornerRadius: 16,
+            isSelected: active,
+            usesBackgroundScrim: false,
             action: action
         ) {
-            VStack(spacing: 7) {
-                Image(systemName: active ? "checkmark.circle.fill" : mode.icon)
-                    .font(.system(size: 18, weight: .semibold))
-                Text(mode.title).font(.system(size: 11, weight: .bold)).lineLimit(1)
+            VStack(spacing: 4) {
+                ZStack {
+                    Circle()
+                        .fill(Color.accentColor.opacity(active ? 0.16 : 0))
+                        .frame(width: 34, height: 34)
+                        .scaleEffect(reduceMotion ? 1 : (active ? 1 : 0.72))
+
+                    Image(systemName: mode.icon)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(active ? Color.accentColor : Color.slate700)
+                        .scaleEffect(reduceMotion ? 1 : (active ? 1.08 : 1))
+                        .symbolEffect(.bounce.up, value: selectionEffectTrigger)
+                }
+                .frame(height: 30)
+
+                Text(mode.title)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(active ? Color.slate900 : Color.slate800)
+                    .lineLimit(1)
+
+                Capsule()
+                    .fill(Color.accentColor)
+                    .frame(width: active ? 24 : 6, height: 3)
+                    .opacity(active ? 1 : 0)
             }
-            .foregroundStyle(active ? Color.accentColor : Color.slate700)
             .frame(maxWidth: .infinity)
             .frame(height: 72)
+            .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .animation(
+                reduceMotion
+                    ? .easeOut(duration: 0.12)
+                    : .spring(response: 0.32, dampingFraction: 0.72),
+                value: active
+            )
         }
         .accessibilityLabel("\(mode.title)主题")
         .accessibilityAddTraits(active ? .isSelected : [])
+        .onChange(of: active) { _, isActive in
+            guard isActive, !reduceMotion else { return }
+            selectionEffectTrigger += 1
+        }
     }
 }
 

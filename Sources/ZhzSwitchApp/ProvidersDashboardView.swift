@@ -21,10 +21,7 @@ struct ProvidersDashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            ModuleHeader(
-                title: "提供商",
-                subtitle: "统一管理 \(family.displayName) 的 API 密钥与端点",
-                eyebrow: "模块 / Providers / \(family.displayName)",
+            ModuleActionsBar(
                 actions: [
                     ModuleAction(title: "筛选", icon: "line.3.horizontal.decrease"),
                     ModuleAction(title: "排序", icon: "arrow.up.arrow.down"),
@@ -417,7 +414,7 @@ private enum ProviderStatus {
     var background: Color {
         switch self {
         case .active: .green.opacity(0.18)
-        case .idle: .white.opacity(0.45)
+        case .idle: .slate500.opacity(0.14)
         case .warning: .yellow.opacity(0.22)
         }
     }
@@ -425,7 +422,7 @@ private enum ProviderStatus {
     var border: Color {
         switch self {
         case .active: .green.opacity(0.32)
-        case .idle: .white.opacity(0.65)
+        case .idle: .slate500.opacity(0.28)
         case .warning: .orange.opacity(0.32)
         }
     }

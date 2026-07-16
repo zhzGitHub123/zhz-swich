@@ -27,7 +27,7 @@ struct ProviderFamilySwitcher: View {
     @Binding var selection: AppThemeFamily
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 14) {
             ForEach(AppThemeFamily.allCases) { family in
                 ProviderFamilyButton(
                     family: family,
@@ -37,7 +37,7 @@ struct ProviderFamilySwitcher: View {
                 }
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 52)
+        .frame(maxWidth: .infinity, minHeight: 60)
     }
 }
 
@@ -51,84 +51,115 @@ private struct ProviderFamilyButton: View {
 
     var body: some View {
         Button(action: action) {
-            ProviderFamilyGlyph(family: family, isSelected: isSelected)
-            .frame(maxWidth: .infinity, minHeight: 52)
-            .background {
-                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                    .fill(isSelected ? family.accentColor.opacity(0.14) : Color.themeSurface.opacity(isHovered ? 0.34 : 0.20))
+            ZStack {
+                Circle()
+                    .fill(buttonFill)
+
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(isSelected ? 0.24 : 0.15),
+                                Color.white.opacity(0.02),
+                                Color.clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                Circle()
+                    .strokeBorder(Color.white.opacity(isSelected ? 0.28 : 0.12), lineWidth: 1)
+                    .padding(2)
+
+                ProviderFamilyGlyph(family: family, isSelected: isSelected)
             }
+            .frame(width: 52, height: 52)
             .overlay {
-                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                    .stroke(isSelected ? family.accentColor.opacity(0.50) : Color.themeBorder.opacity(0.20), lineWidth: 1)
+                Circle()
+                    .strokeBorder(outerBorder, lineWidth: isSelected ? 1.5 : 1)
             }
+            .shadow(
+                color: isSelected
+                    ? family.accentColor.opacity(0.34)
+                    : Color.black.opacity(isHovered ? 0.14 : 0.08),
+                radius: isSelected ? 12 : 7,
+                y: isSelected ? 5 : 3
+            )
+            .scaleEffect(isHovered && !reduceMotion ? 1.035 : 1)
             .offset(y: isHovered && !reduceMotion ? -1 : 0)
         }
         .buttonStyle(.plain)
+        .contentShape(Circle())
         .onHover { isHovered = $0 }
         .interactivePointerStyle()
         .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: isHovered)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.20), value: isSelected)
         .accessibilityLabel("切换到 \(family.displayName) 大类")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .help(family.displayName)
     }
+
+    private var buttonFill: some ShapeStyle {
+        LinearGradient(
+            colors: isSelected
+                ? [family.accentColor.opacity(0.82), family.accentColor.opacity(0.48)]
+                : [Color.themeSurface.opacity(isHovered ? 0.48 : 0.34), Color.themeSurface.opacity(0.16)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var outerBorder: some ShapeStyle {
+        LinearGradient(
+            colors: isSelected
+                ? [Color.white.opacity(0.58), family.accentColor.opacity(0.88), family.accentColor.opacity(0.30)]
+                : [Color.white.opacity(0.20), Color.themeBorder.opacity(0.36)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 }
 
-private struct ProviderFamilyGlyph: View {
+struct ProviderFamilyGlyph: View {
     let family: AppThemeFamily
     let isSelected: Bool
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 11, style: .continuous)
-                .fill(family.accentColor.opacity(isSelected ? 0.20 : 0.11))
+        Image(logoAssetName)
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(isSelected ? Color.white : family.accentColor)
+            .frame(width: family == .codex ? 25 : 27, height: family == .codex ? 25 : 27)
+            .shadow(color: Color.black.opacity(isSelected ? 0.18 : 0), radius: 2, y: 1)
+            .accessibilityHidden(true)
+    }
 
-            switch family {
-            case .codex:
-                Image(systemName: "chevron.left.forwardslash.chevron.right")
-                    .font(.system(size: 16, weight: .bold))
-            case .claude:
-                Image(systemName: "sparkles")
-                    .font(.system(size: 17, weight: .semibold))
-            }
+    private var logoAssetName: String {
+        switch family {
+        case .codex: "GPTLogo"
+        case .claude: "ClaudeLogo"
         }
-        .foregroundStyle(family.accentColor)
-        .frame(width: 38, height: 38)
     }
 }
 
-struct ModuleHeader: View {
-    let title: String
-    let subtitle: String
-    var eyebrow = "模块"
-    var actions: [ModuleAction] = []
+struct ModuleActionsBar: View {
+    let actions: [ModuleAction]
     var usesLiquidGlassButtons = false
     var onAction: ((ModuleAction) -> Void)? = nil
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 18) {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(eyebrow)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.72))
-                Text(title)
-                    .font(.system(size: 29, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color.white.opacity(0.98))
-                Text(subtitle)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.82))
-            }
-            .shadow(color: Color.black.opacity(0.48), radius: 3, y: 1)
-            Spacer(minLength: 12)
-            HStack(spacing: 8) {
-                ForEach(actions) { action in
-                    HeaderButton(
-                        title: action.title,
-                        icon: action.icon,
-                        emphasized: action.emphasized,
-                        usesLiquidGlass: usesLiquidGlassButtons,
-                        action: onAction.map { handler in { handler(action) } }
-                    )
-                }
+        HStack(spacing: 8) {
+            Spacer(minLength: 0)
+            ForEach(actions) { action in
+                HeaderButton(
+                    title: action.title,
+                    icon: action.icon,
+                    emphasized: action.emphasized,
+                    usesLiquidGlass: usesLiquidGlassButtons,
+                    action: onAction.map { handler in { handler(action) } }
+                )
             }
         }
     }
@@ -256,22 +287,51 @@ struct HeaderButton: View {
 
 struct VisualToggle: View {
     let enabled: Bool
+    var accessibilityLabel = "状态"
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isOn: Bool
+
+    init(enabled: Bool, accessibilityLabel: String = "状态") {
+        self.enabled = enabled
+        self.accessibilityLabel = accessibilityLabel
+        _isOn = State(initialValue: enabled)
+    }
 
     var body: some View {
-        Capsule()
-            .fill(
-                enabled
-                ? AnyShapeStyle(LinearGradient(colors: [.cyan, .purple], startPoint: .leading, endPoint: .trailing))
-                : AnyShapeStyle(Color.slate500.opacity(0.24))
-            )
-            .frame(width: 42, height: 24)
-            .overlay(alignment: enabled ? .trailing : .leading) {
+        Toggle(isOn: $isOn) {
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(
+                        isOn
+                        ? AnyShapeStyle(LinearGradient(colors: [.cyan, .purple], startPoint: .leading, endPoint: .trailing))
+                        : AnyShapeStyle(Color.slate500.opacity(0.24))
+                    )
+
                 Circle()
                     .fill(.white)
                     .frame(width: 18, height: 18)
-                    .padding(3)
                     .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
+                    .offset(x: isOn ? 21 : 3)
             }
+            .frame(width: 42, height: 24)
+            .contentShape(Capsule())
+            .animation(
+                reduceMotion
+                    ? .easeOut(duration: 0.12)
+                    : .spring(response: 0.24, dampingFraction: 0.78),
+                value: isOn
+            )
+        }
+        .toggleStyle(.button)
+        .buttonStyle(.plain)
+        .padding(6)
+        .contentShape(Rectangle())
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityValue(isOn ? "开启" : "关闭")
+        .onChange(of: enabled) { _, newValue in
+            isOn = newValue
+        }
     }
 }
 

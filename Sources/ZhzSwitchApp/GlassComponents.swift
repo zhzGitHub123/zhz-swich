@@ -215,6 +215,8 @@ extension Color {
     static let slate900 = adaptive(light: 0x0F172A, dark: 0xF8FAFC)
     static let themeSurface = adaptive(light: 0xFFFFFF, dark: 0x94A3B8)
     static let themeBorder = adaptive(light: 0xFFFFFF, dark: 0xCBD5E1)
+    static let glassScrim = adaptive(light: 0xFFFFFF, dark: 0x000000)
+    static let themeSeparator = adaptive(light: 0x64748B, dark: 0xCBD5E1)
 
     static func adaptive(light: UInt, dark: UInt) -> Color {
         Color(
