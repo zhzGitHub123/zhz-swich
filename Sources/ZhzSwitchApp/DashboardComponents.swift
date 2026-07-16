@@ -289,7 +289,7 @@ struct VisualToggle: View {
     let enabled: Bool
     var accessibilityLabel = "状态"
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.appThemeFamily) private var themeFamily
     @State private var isOn: Bool
 
     init(enabled: Bool, accessibilityLabel: String = "状态") {
@@ -299,39 +299,17 @@ struct VisualToggle: View {
     }
 
     var body: some View {
-        Toggle(isOn: $isOn) {
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(
-                        isOn
-                        ? AnyShapeStyle(LinearGradient(colors: [.cyan, .purple], startPoint: .leading, endPoint: .trailing))
-                        : AnyShapeStyle(Color.slate500.opacity(0.24))
-                    )
-
-                Circle()
-                    .fill(.white)
-                    .frame(width: 18, height: 18)
-                    .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
-                    .offset(x: isOn ? 21 : 3)
+        Toggle(accessibilityLabel, isOn: $isOn)
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .tint(themeFamily.accentColor)
+            .padding(6)
+            .contentShape(Rectangle())
+            .accessibilityLabel(accessibilityLabel)
+            .accessibilityValue(isOn ? "开启" : "关闭")
+            .onChange(of: enabled) { _, newValue in
+                isOn = newValue
             }
-            .frame(width: 42, height: 24)
-            .contentShape(Capsule())
-            .animation(
-                reduceMotion
-                    ? .easeOut(duration: 0.12)
-                    : .spring(response: 0.24, dampingFraction: 0.78),
-                value: isOn
-            )
-        }
-        .toggleStyle(.button)
-        .buttonStyle(.plain)
-        .padding(6)
-        .contentShape(Rectangle())
-        .accessibilityLabel(accessibilityLabel)
-        .accessibilityValue(isOn ? "开启" : "关闭")
-        .onChange(of: enabled) { _, newValue in
-            isOn = newValue
-        }
     }
 }
 

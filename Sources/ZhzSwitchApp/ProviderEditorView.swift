@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProviderEditorView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.appThemeFamily) private var themeFamily
 
     private let provider: ProviderProfile?
     let onSave: (ProviderProfile) throws -> Void
@@ -141,7 +142,8 @@ struct ProviderEditorView: View {
                     EditorSectionTitle(icon: "point.3.connected.trianglepath.dotted", title: "请求地址", subtitle: "连接兼容的 API 服务端点")
                     Spacer()
                     Toggle("完整 URL", isOn: $usesFullURL)
-                        .toggleStyle(EditorToggleStyle())
+                        .toggleStyle(.switch)
+                        .tint(themeFamily.accentColor)
                 }
                 TextField("https://your-api-endpoint.com", text: $baseURL)
                     .textFieldStyle(EditorTextFieldStyle())
@@ -208,7 +210,8 @@ struct ProviderEditorView: View {
                     EditorSectionTitle(icon: "curlybraces.square", title: "配置 JSON", subtitle: "保存时校验格式并写入配置")
                     Spacer()
                     Toggle("写入通用配置", isOn: $writesGeneralConfiguration)
-                        .toggleStyle(EditorToggleStyle())
+                        .toggleStyle(.switch)
+                        .tint(themeFamily.accentColor)
                 }
 
                 TextEditor(text: $configurationJSON)
@@ -376,6 +379,8 @@ private struct EditorReadOnlyField: View {
 }
 
 private struct StandaloneConfigurationRow: View {
+    @Environment(\.appThemeFamily) private var themeFamily
+
     let icon: String
     let title: String
     @Binding var isEnabled: Bool
@@ -391,7 +396,8 @@ private struct StandaloneConfigurationRow: View {
                     .foregroundStyle(Color.slate900)
                 Spacer()
                 Toggle("使用单独配置", isOn: $isEnabled)
-                    .toggleStyle(EditorToggleStyle())
+                    .toggleStyle(.switch)
+                    .tint(themeFamily.accentColor)
             }
             .padding(16)
         }
@@ -433,22 +439,5 @@ private struct EditorSectionTitle: View {
                     .foregroundStyle(Color.slate600)
             }
         }
-    }
-}
-
-private struct EditorToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-        } label: {
-            HStack(spacing: 8) {
-                configuration.label
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Color.slate700)
-                VisualToggle(enabled: configuration.isOn)
-            }
-        }
-        .buttonStyle(.plain)
-        .accessibilityValue(configuration.isOn ? "已开启" : "已关闭")
     }
 }
