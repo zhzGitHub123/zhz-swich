@@ -3,6 +3,10 @@
 macOS 菜单栏工具：一键切换 ChatGPT 桌面版（Codex 内核，bundle id `com.openai.codex`）的登录账号。
 只替换登录凭证，本地会话记录、项目、配置、插件全部原样保留。
 
+![Z-Swich 账号管理窗口](docs/screenshots/main-window.png)
+
+<sub>账号管理窗口：顶部为当前账号与额度窗口（剩余百分比与重置倒计时），下方为已保存账号表格，可单独查询额度或一键切换。截图中的账号信息已打码。</sub>
+
 ## 原理
 
 ChatGPT 桌面版的账号身份只由 `~/.codex/auth.json` 一个文件决定。
